@@ -1,0 +1,11 @@
+.panel-block:hover{
+  background:hsl(0, 0%, 98%);
+}
+.is-editting .input{
+  border:none;
+  box-shadow: 0 0 0;
+  background: transparent;
+}
+.is-completed{
+
+}
