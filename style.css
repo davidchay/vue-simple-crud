@@ -1,11 +1,26 @@
+body{
+    padding-top: 5em;
+}
 .panel-block:hover{
   background:hsl(0, 0%, 98%);
+}
+.is-editting{
+  box-shadow: inset 0px 0px 15px 1px rgba(0,0,0,0.15);
+    
 }
 .is-editting .input{
   border:none;
   box-shadow: 0 0 0;
   background: transparent;
 }
-.is-completed{
-
+.panel-block.is-completed{
+    background-color: hsl(0, 0%, 96%);
+    text-decoration:  line-through;
+    color: hsl(0, 0%, 71%);
+}
+.panel-block.is-completed .fa{
+    color: hsl(0, 0%, 71%);   
+}
+.panel-block > .panel-icon:hover{
+    cursor:pointer;
 }

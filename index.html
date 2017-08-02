@@ -8,92 +8,81 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
 </head>
 <body>
-     <div class="container">
+     <div id="app" class="container">
         <div class="columns is-mobile">
             <div class="column is-half is-offset-one-quarter">
                 <div class="panel">
                     <div class="panel-heading">
                         <h4 class="title">Tareas </h4>
                     </div>
-                    <div class="panel-block">
-                        <span class="panel-icon is-pulled-right">
-                          <i class="fa fa-square-o" aria-hidden="true"></i>
+                    <div v-for="(task, index) in tasks" class="panel-block" :class="{'is-editting':task.editting, 'is-completed':!task.pending}">
+                        <span @click="toggleStatus(task)" class="panel-icon">
+                          <i class="fa " :class="task.pending ? 'fa-square-o' : 'fa-check-square-o' " aria-hidden="true"></i>
                         </span>
-                        <p class="control">
-                            
-                            marksheet
-                            
-                        </p>
-                        <div class="field is-grouped is-grouped-right">
-                          <p class="control">
-                            <button type="button" class="button is-info">
-                            <span class="icon is-small">
-                              <i class="fa fa-pencil" aria-hidden="true"></i>
-                            </span>
-                            </button>
-                          </p>
-                          <p class="control">
-                            <button type="button" class="button is-danger">
-                            <span class="icon is-small">
-                              <i class="fa fa-trash-o" aria-hidden="true"></i>
-                            </span>
-                            </button>
-                          </p>
-                        </div>
-                    </div><!-- ./panel-block -->
-                    <div class="panel-block is-editting">
-                        <span class="panel-icon is-pulled-right">
-                          <i class="fa fa-square-o" aria-hidden="true"></i>
-                        </span>
+                        <template v-if="!task.editting">
+                            <p class="control">
+                                <span >{{task.description}}</span>
+                            </p>      
+                            <div class="field is-grouped is-grouped-right">
+                              <p class="control">
+                                <button @click="editTask(task)" type="button" class="button is-info" :disabled="!task.pending">
+                                <span class="icon is-small">
+                                  <i class="fa fa-pencil" aria-hidden="true"></i>
+                                </span>
+                                </button>
+                              </p>
+                              <p class="control">
+                                <button @click="deleteTask(index)" type="button" class="button is-danger" :disabled="!task.pending">
+                                <span class="icon is-small">
+                                  <i class="fa fa-trash-o" aria-hidden="true"></i>
+                                </span>
+                                </button>
+                              </p>
+                            </div><!-- ./field is-grouped -->
+                        </template>
+
+                        <template v-else>
+                            <input class="input is-paddingless" type="text" v-model="draft">
+                            <div class="field is-grouped is-grouped-right">
+                              <p class="control">
+                                <button @click="updateTask(task)" type="button" class="button is-primary">
+                                <span class="icon is-small">
+                                  <i class="fa fa-check" aria-hidden="true"></i>
+                                </span>
+                                </button>
+                              </p>
+                              <p class="control">
+                                <button @click="discardTask(task)" type="button" class="button is-warning">
+                                <span class="icon is-small">
+                                  <i class="fa fa-times" aria-hidden="true"></i>
+                                </span>
+                                </button>
+                              </p>
+                            </div><!-- ./field is-grouped -->
+                        </template>
                         
-                            <div class="control ">
-                                <input class="input is-paddingless" type="text" value="Esta es la tarea en edicion">
-                            </div>
-                        
-                        <div class="field is-grouped is-grouped-right">
-                          <p class="control">
-                            <button type="button" class="button is-primary">
-                            <span class="icon is-small">
-                              <i class="fa fa-check" aria-hidden="true"></i>
-                            </span>
-                            </button>
-                          </p>
-                          <p class="control">
-                            <button type="button" class="button is-warning">
-                            <span class="icon is-small">
-                              <i class="fa fa-times" aria-hidden="true"></i>
-                            </span>
-                            </button>
-                          </p>
-                        </div>
                     </div><!-- ./panel-block -->
-                    <div class="panel-block is-completed">
-                        <span class="panel-icon">
-                          <i class="fa fa-check-square-o has-text-grey-light" aria-hidden="true"></i>
-                        </span>
-                        <p class="control">
-                            
-                            <del>Tarea completada</del>
-                            
-                        </p>
-                        <div class="field is-grouped is-grouped-right">
-                          <p class="control">
-                            <button type="button" class="button is-info" disabled>
-                            <span class="icon is-small">
-                              <i class="fa fa-pencil" aria-hidden="true"></i>
-                            </span>
-                            </button>
-                          </p>
-                          <p class="control">
-                            <button type="button" class="button is-danger" disabled>
-                            <span class="icon is-small">
-                              <i class="fa fa-trash-o" aria-hidden="true"></i>
-                            </span>
-                            </button>
-                          </p>
-                        </div>
-                    </div><!-- .panel-block -->
-                </div>
+                    
+                </div><!-- ./panel -->
+                <hr>
+                <form @submit.prevent="createTask">
+                    <div class="field has-addons">
+                      <div class="control is-expanded">
+                        <input class="input" type="text" placeholder="Tarea nueva" v-model="newTask">
+                      </div>
+                      <div class="control">
+                        <button type="submit" class="button is-primary">
+                          Agregar
+                        </button>
+                      </div>
+                    </div>
+                    <div class="control">
+                        <button @click="deleteCompleted" type="button" class="button is-small is-inverted is-warning pull-right">
+                            <i class="fa fa-exclamation-triangle" aria-hidden="true"></i> 
+                            &nbsp; Eliminar Tareas completadas
+                        </button>
+                     </div>
+                </form>
             </div><!-- ./colum -->
         </div><!-- ./columns -->
         
@@ -103,5 +92,70 @@
     </div>    
 
     <script src="https://unpkg.com/vue"></script>
+    <script>
+        var vm = new Vue({
+            el:'#app',
+            data:{
+                draft:'',
+                newTask:'',
+                tasks:[
+                {
+                    description:'Aprender Vue.js',
+                    editting:false,
+                    pending:true
+                },
+                {
+                    description:'Suscribirse a Styde',
+                    editting:false,
+                    pending:true
+                },
+                {
+                    description:'Hacer los ejercicios',
+                    editting:false,
+                    pending:false
+                }
+
+                ],
+            },
+            methods:{
+                createTask:function(){
+                    this.tasks.push({
+                           description:this.newTask,
+                           editting:false,
+                           pending:true
+                    });
+                    this.newTask='';
+                },
+                toggleStatus:function(task){
+                    task.pending = !task.pending;
+                },
+                editTask:function(task){
+                    this.tasks.forEach(function(task){
+                        task.editting=false;
+                    });
+
+                    this.draft=task.description;
+
+                    task.editting=true;
+                },
+                updateTask:function(task){
+                  task.description=this.draft;  
+                  task.editting=false;
+                },
+                discardTask:function(task){
+                  task.editting=false;  
+                  this.draft='';
+                },
+                deleteTask:function(index){
+                    this.tasks.splice(index, 1);
+                },
+                deleteCompleted:function(){
+                    this.tasks = this.tasks.filter(function(task){
+                        return task.pending;
+                    })
+                }
+            }
+        });
+    </script>
 </body>
 </html>
